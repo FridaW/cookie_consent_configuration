@@ -1,0 +1,47 @@
+
+window.cookieconsent.initialise({
+
+  "palette":{"popup":{"background":"#343c66","text":"#cfcfe8"},
+  "button":{"background":"#f71559"}},
+  "content":{"dismiss":"Got it","href":"http://www.healthunlimited.com/cookies"},
+  law: {
+        regionalLaw: true,
+      },
+  location: true,
+  location: {
+      serviceDefinitions: {
+        mynewservice: function(options) {
+          return {
+            url: '//ipinfo.io/json',
+            /*the third party service that can detect visitors' addresses */
+            callback: function(done, response) {
+
+              try {
+                var json = JSON.parse(response);
+                if (json. country) {
+                  console.log(json.country)
+                  return {code: json.country}          
+                }
+                throw 'Could not find a country code in the response';
+              } catch (err) {
+                return new Error('Invalid response (' + err + ')');
+              }
+            }
+          }
+        }     
+      },
+      services: [
+        'mynewservice'
+      ],
+    },
+});
+
+/*
+For location, you can also use 
+
+    location.services:[‘freegeoip’, ‘ipinfo’, ‘maxmind’]
+	
+This array defines the services that you want to use. We attempt to get the country code from the first service, and only if the service fails do we move onto the next service. 
+If all services fail, the popup is opened without modification.
+If a service succeeds, then the two letter country code is passed to the ‘Law’ module, with changes your popup options depending on the cookie laws in the country code.
+*/
